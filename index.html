@@ -1,0 +1,827 @@
+تصميم واجهة تطبيق محادثة بتصميم عصري ومتجاوب
+
+سأصمم لك واجهة تطبيق محادثة مشابهة لـ ChatGPT باستخدام HTML وCSS فقط، بتصميم عصري بألوان Dark Mode وتأثيرات جميلة، مع ضمان التوافق مع جميع أحجام الشاشات.
+
+لمحة عن التصميم
+
+بناءً على نتائج البحث، سأعتمد على أفضل ممارسات تصميم واجهات المحادثة الحديثة، مع التركيز على:
+
+· تصميم Dark Mode المريح للعينين مع تباين جيد 
+· تجربة مستخدم متجاوبة تعمل على جميع أحجام الشاشات 
+· تأثيرات وتحسينات بصرية تجعل الواجهة جذابة وسلسة 
+· هيكل واضح وسهل الاستخدام مستوحى من أفضل نماذج واجهات المحادثة 
+
+التنفيذ الكامل
+
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق المحادثة الذكية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1e1e1e;
+            --tertiary-bg: #2d2d2d;
+            --primary-color: #4e8cff;
+            --primary-hover: #3a7dff;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --user-msg-bg: #2d5278;
+            --bot-msg-bg: #2d2d2d;
+            --border-radius: 12px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* الهيدر */
+        .header {
+            background-color: var(--secondary-bg);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo-icon {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-icon {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-icon:hover {
+            color: var(--text-primary);
+        }
+
+        /* منطقة المحادثة الرئيسية */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* الشريط الجانبي */
+        .sidebar {
+            width: 260px;
+            background-color: var(--secondary-bg);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            transition: var(--transition);
+        }
+
+        .new-chat-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1rem;
+            width: 100%;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .new-chat-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .history-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            padding-right: 0.5rem;
+        }
+
+        .chat-history {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chat-item {
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .chat-item:hover {
+            background-color: var(--tertiary-bg);
+            color: var(--text-primary);
+        }
+
+        .chat-item i {
+            font-size: 0.9rem;
+        }
+
+        /* منطقة المحادثة */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            scroll-behavior: smooth;
+        }
+
+        /* تخصيص شريط التمرير */
+        .messages-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: var(--tertiary-bg);
+            border-radius: 4px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            line-height: 1.6;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background-color: var(--user-msg-bg);
+            align-self: flex-start;
+            border-bottom-right-radius: 0;
+        }
+
+        .bot-message {
+            background-color: var(--bot-msg-bg);
+            align-self: flex-end;
+            border-bottom-left-radius: 0;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            background-color: #3a7dff;
+        }
+
+        .bot-avatar {
+            background-color: #9d4edd;
+        }
+
+        .message-content {
+            margin-bottom: 0.5rem;
+        }
+
+        .message-timestamp {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: left;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .action-btn:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* منطقة الإدخال */
+        .input-container {
+            padding: 1.25rem;
+            background-color: var(--secondary-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .input-box {
+            display: flex;
+            background-color: var(--tertiary-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .input-box:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(78, 140, 255, 0.2);
+        }
+
+        .message-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            padding: 1.25rem;
+            font-size: 1rem;
+            resize: none;
+            height: 60px;
+            max-height: 150px;
+            outline: none;
+        }
+
+        .message-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .input-options {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .option-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .examples {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .example-chip {
+            background-color: var(--tertiary-bg);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .example-chip:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* تأثيرات للوحة الكتابة */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            background-color: var(--bot-msg-bg);
+            border-radius: var(--border-radius);
+            align-self: flex-end;
+            max-width: max-content;
+            margin-bottom: 1rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--text-secondary);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite both;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingAnimation {
+            0%, 80%, 100% { 
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* التصميم المتجاوب */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(100%);
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                height: 100%;
+                z-index: 20;
+                width: 260px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .nav-items {
+                display: none;
+            }
+            
+            .menu-btn {
+                display: block !important;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo span {
+                font-size: 1.1rem;
+            }
+            
+            .messages-container {
+                padding: 1rem;
+            }
+            
+            .message {
+                max-width: 95%;
+                padding: 1rem;
+            }
+            
+            .input-container {
+                padding: 1rem;
+            }
+            
+            .examples {
+                display: none;
+            }
+        }
+
+        .menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        /* تأثيرات الظل والعمق */
+        .message, .input-box, .sidebar, .header {
+            box-shadow: var(--shadow);
+        }
+
+        /* تأثيرات التحويل عند التمرير */
+        .messages-container {
+            scroll-behavior: smooth;
+        }
+
+        /* تخصيص التحديد */
+        ::selection {
+            background-color: rgba(78, 140, 255, 0.3);
+        }
+
+        /* تأثيرات للازرار عند النقر */
+        .send-button:active, .new-chat-btn:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+    <!-- الهيدر -->
+    <header class="header">
+        <div class="logo">
+            <i class="logo-icon fas fa-robot"></i>
+            <span>المساعد الذكي</span>
+        </div>
+        <div class="nav-items">
+            <i class="nav-icon fas fa-sun"></i>
+            <i class="nav-icon fas fa-history"></i>
+            <i class="nav-icon fas fa-cog"></i>
+            <i class="nav-icon fas fa-user"></i>
+        </div>
+        <button class="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <div class="chat-container">
+        <!-- الشريط الجانبي -->
+        <aside class="sidebar">
+            <button class="new-chat-btn">
+                <i class="fas fa-plus"></i>
+                محادثة جديدة
+            </button>
+            
+            <h3 class="history-title">المحادثات السابقة</h3>
+            <div class="chat-history">
+                <div class="chat-item">
+                    <i class="fas fa-message"></i>
+                    <span>مناقشة حول الذكاء الاصطناعي</span>
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-message"></i>
+                    <span>أفكار لمشاريع تقنية</span>
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-message"></i>
+                    <span>شرح خوارزميات التعلم العميق</span>
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-message"></i>
+                    <span>تصميم واجهات المستخدم</span>
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-message"></i>
+                    <span>الفرق بين ML و DL</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- منطقة المحادثة الرئيسية -->
+        <main class="chat-area">
+            <div class="messages-container">
+                <!-- رسائل المحادثة -->
+                <div class="message user-message">
+                    <div class="message-header">
+                        <div class="avatar user-avatar">م</div>
+                        <span>المستخدم</span>
+                    </div>
+                    <div class="message-content">
+                        مرحبا، كيف يمكنك مساعدتي اليوم؟
+                    </div>
+                    <div class="message-timestamp">١٠:٣٠ ص</div>
+                    <div class="message-actions">
+                        <button class="action-btn"><i class="fas fa-copy"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-up"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-down"></i></button>
+                    </div>
+                </div>
+
+                <div class="message bot-message">
+                    <div class="message-header">
+                        <div class="avatar bot-avatar">ذ</div>
+                        <span>المساعد الذكي</span>
+                    </div>
+                    <div class="message-content">
+                        أهلاً بك! أنا هنا لمساعدتك في أي موضوع تريده. يمكنني الإجابة على الأسئلة، مناقشة الأفكار، أو المساعدة في حل المشكلات. فقط أخبرني بما تحتاج.
+                    </div>
+                    <div class="message-timestamp">١٠:٣١ ص</div>
+                    <div class="message-actions">
+                        <button class="action-btn"><i class="fas fa-copy"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-up"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-down"></i></button>
+                    </div>
+                </div>
+
+                <div class="message user-message">
+                    <div class="message-header">
+                        <div class="avatar user-avatar">م</div>
+                        <span>المستخدم</span>
+                    </div>
+                    <div class="message-content">
+                        هل يمكنك شرح مفهوم الذكاء الاصطناعي التوليدي بكلمات بسيطة؟
+                    </div>
+                    <div class="message-timestamp">١٠:٣٢ ص</div>
+                    <div class="message-actions">
+                        <button class="action-btn"><i class="fas fa-copy"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-up"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-down"></i></button>
+                    </div>
+                </div>
+
+                <div class="message bot-message">
+                    <div class="message-header">
+                        <div class="avatar bot-avatar">ذ</div>
+                        <span>المساعد الذكي</span>
+                    </div>
+                    <div class="message-content">
+                        بالطبع! الذكاء الاصطناعي التوليدي هو نوع من الذكاء الاصطناعي يمكنه إنشاء محتوى جديد مثل النصوص والصور والموسيقى بدلاً من مجرد تحليل البيانات الموجودة. 
+
+                        يعمل من خلال تعلم الأنماط من البيانات الضخمة ثم استخدام هذه المعرفة لإنتاج محتوى جديد مشابه للمحتوى الذي تدرب عليه. 
+
+                        أمثلة عليه: نماذج اللغة مثل ChatGPT التي تولد نصوصًا، أو أنظمة مثل DALL-E التي تنشئ صورًا من الوصف النصي.
+                    </div>
+                    <div class="message-timestamp">١٠:٣٣ ص</div>
+                    <div class="message-actions">
+                        <button class="action-btn"><i class="fas fa-copy"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-up"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-down"></i></button>
+                    </div>
+                </div>
+
+                <div class="typing-indicator">
+                    <span>يكتب</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- منطقة إدخال الرسائل -->
+            <div class="input-container">
+                <div class="input-box">
+                    <textarea class="message-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+                    <button class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-options">
+                    <span class="option-text">اقتراحات:</span>
+                    <div class="examples">
+                        <div class="example-chip">كيف يعمل الذكاء الاصطناعي؟</div>
+                        <div class="example-chip">ما هي أحدث اتجاهات التصميم؟</div>
+                        <div class="example-chip">أختر قصة قصيرة</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // جافاسكريبت للتفاعلية الأساسية
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.querySelector('.message-input');
+            const sendButton = document.querySelector('.send-button');
+            const messagesContainer = document.querySelector('.messages-container');
+            const menuBtn = document.querySelector('.menu-btn');
+            const sidebar = document.querySelector('.sidebar');
+            
+            // تكبير منطقة النص تلقائياً
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                
+                if (this.scrollHeight > 150) {
+                    this.style.overflowY = 'auto';
+                } else {
+                    this.style.overflowY = 'hidden';
+                }
+            });
+            
+            // إرسال الرسالة عند الضغط على الزر
+            sendButton.addEventListener('click', function() {
+                sendMessage();
+            });
+            
+            // إرسال الرسالة عند الضغط على Enter
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // فتح وإغلاق القائمة الجانبية على الأجهزة المحمولة
+            menuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+            
+            // إغلاق القائمة الجانبية عند النقر خارجها
+            document.addEventListener('click', function(e) {
+                if (sidebar.classList.contains('active') && 
+                    !sidebar.contains(e.target) && 
+                    !menuBtn.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            });
+            
+            // وظيفة إرسال الرسالة
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message) {
+                    // إضافة رسالة المستخدم
+                    addMessage(message, 'user');
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
+                    
+                    // محاكاة رد المساعد بعد فترة
+                    setTimeout(() => {
+                        simulateResponse();
+                    }, 1000);
+                }
+            }
+            
+            // إضافة رسالة إلى الواجهة
+            function addMessage(text, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.classList.add(sender + '-message');
+                
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                
+                messageElement.innerHTML = `
+                    <div class="message-header">
+                        <div class="avatar ${sender}-avatar">${sender === 'user' ? 'م' : 'ذ'}</div>
+                        <span>${sender === 'user' ? 'المستخدم' : 'المساعد الذكي'}</span>
+                    </div>
+                    <div class="message-content">${text}</div>
+                    <div class="message-timestamp">${timeString}</div>
+                    <div class="message-actions">
+                        <button class="action-btn"><i class="fas fa-copy"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-up"></i></button>
+                        <button class="action-btn"><i class="fas fa-thumbs-down"></i></button>
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(messageElement);
+                
+                // التمرير إلى الأسفل
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            // محاكاة استجابة المساعد
+            function simulateResponse() {
+                const responses = [
+                    "هذا سؤال مثير للاهتمام! دعني أفكر في أفضل way للإجابة عليه...",
+                    "شكراً على سؤالك. إليك ما أعرفه عن هذا الموضوع...",
+                    "لقد بحثت في هذا الموضوع مؤخراً. اسمح لي أن أشاركك ما تعلمته...",
+                    "هذا موضوع شيق! هناك عدة زوايا يمكننا النظر منها إلى هذا الأمر..."
+                ];
+                
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, 'bot');
+            }
+            
+            // إضافة تفاعل لرقائق الاقتراحات
+            const exampleChips = document.querySelectorAll('.example-chip');
+            exampleChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    messageInput.value = this.textContent;
+                    messageInput.focus();
+                    messageInput.dispatchEvent(new Event('input'));
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+```
+
+ميزات التصميم
+
+1. واجهة Dark Mode عصرية
+
+· ألوان داكنة مريحة للعين مع تباين جيد بين العناصر 
+· تدرج الألوان المتناسق مع إبراز الأزرق للعناصر التفاعلية
+· ظلال عميقة تضيف عمقاً للأبعاد للواجهة
+
+2. تأثيرات بصرية جميلة
+
+· حركات وتقنيات لتحسين تجربة المستخدم 
+· مؤشر الكتابة المتحرك عند استجابة المساعد
+· تأثيرات التمرير السلس للرسائل
+· حركات التظليل عند التحويم فوق العناصر التفاعلية
+
+3. تصميم متجاوب كامل
+
+· يتكيف مع جميع أحجام الشاشات من الهواتف إلى أجهزة الكمبيوتر 
+· ترتيب مرن للعناصر يضمن تجربة مستخدم مثالية
+· إخفاء الشريط الجانبي تلقائياً على الشاشات الصغيرة
+
+4. عناصر واجهة مستخدم متكاملة
+
+· منطقة محادثة مع فقاعات رسائل مميزة للمستخدم والمساعد
+· شريط جانبي يحتوي على سجل المحادثات
+· منطقة إدخال ذكية تتكيف مع محتوى النص
+· أزرار تفاعلية للإعجاب والنسخ وغيرها
+
+5. تفاعلية محسنة
+
+· إرسال الرسائل بالضغط على زر الإرسال أو مفتاح Enter
+· اقتراحات سريعة للنقر عليها وتعبئة منطقة الإدخال
+· قائمة جانبية قابلة للطي على الشاشات الصغيرة
+
+كيفية الاستخدام
+
+1. احفظ الكود السابق في ملف باسم chat-app.html
+2. افتح الملف في أي متصفح حديث
+3. ابدأ المحادثة بكتابة رسالة في منطقة الإدخال
+4. تفاعل مع الاقتراحات السريعة لتجربة أسرع
+
+يمكنك تخصيص الألوان والأنماط بسهولة من خلال تعديل متغيرات CSS في الجزء العلوي من النمط.
