@@ -23,7 +23,7 @@
             --header-bg: #0A0A0A;
             --new-chat-btn: #1A73E8;
             --new-chat-hover: #145CBF;
-
+            
             /* Responsive font sizes */
             --font-size-xs: 0.75rem;
             --font-size-sm: 0.875rem;
@@ -51,11 +51,12 @@
             min-height: 100vh;
             font-size: var(--font-size-base);
             line-height: 1.5;
+            touch-action: manipulation;
         }
 
         .container-wrapper {
             width: 100%;
-            max-width: 1200px;
+            max-width: 100%;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -198,11 +199,11 @@
         }
 
         @keyframes typing-bounce {
-            0%, 60%, 100% {
+            0%, 60%, 100% { 
                 transform: translateY(0);
                 opacity: 0.6;
             }
-            30% {
+            30% { 
                 transform: translateY(-4px);
                 opacity: 1;
             }
@@ -235,8 +236,8 @@
 
         .copy-btn {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 6px;
+            left: 6px;
             background: rgba(255, 255, 255, 0.1);
             border: none;
             padding: 5px;
@@ -270,6 +271,9 @@
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-color);
             transition: bottom 0.3s ease;
+            /* إضافة خاصية لجعل مربع الإدخال ثابتًا */
+            transform: translateZ(0);
+            will-change: bottom;
         }
 
         .input-wrapper {
@@ -316,8 +320,8 @@
 
         .send-button {
             position: absolute;
-            left: 5px;
-            bottom: 6px;
+            left: 8px;
+            bottom: 8px;
             background: linear-gradient(135deg, var(--send-button-color), #4CAF50);
             color: white;
             border: none;
@@ -386,6 +390,7 @@
         @media (max-width: 768px) {
             body {
                 align-items: stretch;
+                font-size: 16px; /* تحسين حجم الخط على الهواتف */
             }
 
             .container-wrapper {
@@ -407,6 +412,7 @@
             .message {
                 max-width: 92%;
                 font-size: 0.95rem;
+                line-height: 1.6; /* تحسين تباعد الأسطر */
             }
 
             .floating-input-area {
@@ -414,7 +420,7 @@
             }
 
             #user-input {
-                font-size: 16px;
+                font-size: 16px; /* منع التكبير التلقائي على iOS */
                 min-height: 48px;
             }
 
@@ -452,6 +458,7 @@
                 width: 100%;
                 justify-content: center;
                 padding: 8px 16px;
+                font-size: 0.85rem;
             }
 
             .message {
@@ -513,14 +520,48 @@
             }
 
             .keyboard-open .chat-box {
-                max-height: calc(100vh - 120px);
+                max-height: calc(100vh - 140px);
             }
         }
 
-        /* High resolution devices */
-        @media (min-resolution: 2dppx) {
+        /* تحسينات للشاشات الصغيرة جداً */
+        @media (max-width: 320px) {
+            .header-title {
+                font-size: 1rem;
+            }
+            
+            .new-chat-btn {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+            
             .message {
-                border-width: 0.5px;
+                font-size: 0.85rem;
+                max-width: 98%;
+            }
+            
+            #user-input {
+                font-size: 14px;
+                padding: 10px 40px 10px 10px;
+            }
+            
+            .send-button {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000;
+                --chat-bg-color: #1A1A1A;
+                --input-bg-color: #2C2C2C;
+                --text-color: #E0E0E0;
+                --user-message-bg: #161616;
+                --bot-message-bg: #161616;
+                --border-color: #505050;
+                --header-bg: #0A0A0A;
             }
         }
 
@@ -533,59 +574,78 @@
             }
         }
 
-        /* Keyboard animation */
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-            to {
-                transform: translateY(0);
-            }
+        /* Focus styles for accessibility */
+        button:focus-visible, textarea:focus-visible {
+            outline: 2px solid var(--send-button-color);
+            outline-offset: 2px;
         }
 
-        /* Ensure messages are always visible above input */
-        .chat-box {
-            scroll-padding-bottom: 100px;
+        /* Loading animation */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
 
-        .message:last-child {
-            scroll-margin-bottom: 100px;
+        .loading {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        
+        /* تحسينات لللمسات على الهواتف */
+        @media (hover: none) {
+            .send-button:hover, .new-chat-btn:hover {
+                transform: none;
+            }
+            
+            .send-button:active, .new-chat-btn:active {
+                transform: scale(0.95);
+            }
         }
     </style>
 </head>
 <body>
     <div class="container-wrapper">
-
-        <div id="chat-box" class="chat-box">
-            <div class="message bot">
-                <p style="margin: 0; font-size: clamp(0.95rem, 3vw, 1.1rem);">مرحباً! كيف يمكنني مساعدتك اليوم؟؟</p>
-            </div>
+        <!-- Header -->
+        <div class="chat-header">
+            <h1 class="header-title">مساعد جيميناي الذكي</h1>
+            <button class="new-chat-btn" onclick="newChat()">
+                <i class="fas fa-plus"></i> محادثة جديدة
+            </button>
         </div>
 
-        <!-- Floating Input Area - Fixed above keyboard -->
-        <div class="floating-input-area">
-            <div class="input-wrapper">
-                <textarea id="user-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
-                <button class="send-button" onclick="sendMessage()">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                    </svg>
-                </button>
+        <!-- Chat Messages Container -->
+        <div class="chat-box" id="chat-box">
+            <div class="message bot">
+                <h2 style="font-size: clamp(1.1rem, 4vw, 1.4rem); margin: 0 0 8px 0;">مرحباً! 👋</h2>
+                <p style="margin: 0; font-size: clamp(0.95rem, 3vw, 1.1rem);">أنا مساعدك الذكي المدعوم بـ Gemini. كيف يمكنني مساعدتك اليوم؟</p>
             </div>
         </div>
 
         <!-- Scroll to top button -->
-        <button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">
+        <button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">
             <i class="fas fa-arrow-up"></i>
         </button>
+
+        <!-- Input Area - Fixed at bottom -->
+        <div class="floating-input-area">
+            <div class="input-wrapper">
+                <textarea id="user-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+                <button class="send-button" id="send-button" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
         // DOM Elements
-        const chatBox = document.getElementById("chat-box");
-        const userInput = document.getElementById("user-input");
-        const scrollTopBtn = document.getElementById("scrollTopBtn");
-        const floatingInput = document.querySelector('.floating-input-area');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const chatBox = document.getElementById('chat-box');
+        const scrollTopBtn = document.getElementById('scroll-top-btn');
+        const floatingInputArea = document.querySelector('.floating-input-area');
 
         // State variables
         let isKeyboardOpen = false;
@@ -608,6 +668,9 @@
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             if (isMobile) {
                 document.documentElement.style.setProperty('--font-size-base', '16px');
+                
+                // تحسين تجربة اللمس على الهواتف
+                document.body.style.cursor = 'pointer';
             }
         }
 
@@ -635,19 +698,19 @@
                 resizeTimeout = setTimeout(() => {
                     const currentViewportHeight = window.innerHeight;
                     const viewportDifference = initialViewportHeight - currentViewportHeight;
-
+                    
                     if (viewportDifference > 100) {
                         // Keyboard is open
                         isKeyboardOpen = true;
                         keyboardHeight = viewportDifference;
-
+                        
                         // Set CSS variable for keyboard height
                         document.documentElement.style.setProperty('--keyboard-height', keyboardHeight + 'px');
                         document.body.classList.add('keyboard-open');
-
+                        
                         // Adjust chat box height
-                        chatBox.style.maxHeight = `calc(100vh - ${floatingInput.offsetHeight + 100}px)`;
-
+                        chatBox.style.maxHeight = `calc(100vh - ${floatingInputArea.offsetHeight + 100}px)`;
+                        
                         // Scroll to show last messages
                         setTimeout(() => {
                             scrollToBottom();
@@ -683,7 +746,7 @@
         function setupEventListeners() {
             // Input event for textarea
             userInput.addEventListener('input', autoResizeTextarea);
-
+            
             // Enter key to send message
             userInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -699,24 +762,30 @@
 
             // Scroll event for scroll-to-top button
             chatBox.addEventListener('scroll', toggleScrollTopButton);
-
+            
             // Focus input when clicking anywhere in chat area
             chatBox.addEventListener('click', () => {
                 userInput.focus();
             });
+
+            // Send button click event
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Scroll to top button
+            scrollTopBtn.addEventListener('click', scrollToTop);
         }
 
         // Auto-resize textarea
         function autoResizeTextarea() {
             userInput.style.height = 'auto';
             userInput.style.height = userInput.scrollHeight + 'px';
-
+            
             if (userInput.scrollHeight > 120) {
                 userInput.style.overflowY = 'auto';
             } else {
                 userInput.style.overflowY = 'hidden';
             }
-
+            
             // Scroll to bottom when typing
             if (isKeyboardOpen) {
                 scrollToBottom();
@@ -728,7 +797,7 @@
             if (confirm('هل تريد بدء محادثة جديدة؟ سيتم مسح تاريخ المحادثة الحالية.')) {
                 const messages = chatBox.querySelectorAll('.message:not(.bot)');
                 messages.forEach(msg => msg.remove());
-
+                
                 const welcomeMsg = document.createElement('div');
                 welcomeMsg.className = 'message bot';
                 welcomeMsg.innerHTML = `
@@ -736,7 +805,7 @@
                     <p style="margin: 0; font-size: clamp(0.95rem, 3vw, 1.1rem);">لنبدأ محادثة جديدة! كيف يمكنني مساعدتك؟</p>
                 `;
                 chatBox.appendChild(welcomeMsg);
-
+                
                 userInput.value = '';
                 autoResizeTextarea();
                 scrollToBottom();
@@ -753,6 +822,9 @@
             userInput.value = "";
             autoResizeTextarea();
             showTypingIndicator();
+
+            // إبقاء لوحة المفاتيح مفتوحة بعد الإرسال
+            userInput.focus();
 
             try {
                 const res = await fetch("/chat", {
@@ -819,9 +891,9 @@
 
         // Scroll to Top function
         function scrollToTop() {
-            chatBox.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+            chatBox.scrollTo({ 
+                top: 0, 
+                behavior: 'smooth' 
             });
         }
 
@@ -907,7 +979,7 @@
                                 </svg>
                             `;
                             showToast('تم نسخ الكود بنجاح!');
-
+                            
                             setTimeout(() => {
                                 button.innerHTML = `
                                     <svg viewBox="0 0 24 24">
@@ -924,5 +996,4 @@
         }
     </script>
 </body>
-
 </html>
